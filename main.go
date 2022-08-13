@@ -82,11 +82,16 @@ func main() {
 	/* Test 3
 	var inputGenerated []string = []string{"Xeljanz", "Trisenox", "Afinitor", "Nityr", "Mylotarg", "Phesgo", "Ampyra", "Odomzo", "Delstrigo", "Enhertu", "Thiola", "Gelnique", "Nardil", "Cardura", "Cortef", "Gleevec", "Daypro", "Evista", "Myobloc", "Treanda", "Lumoxiti", "Bosulif", "Levoxyl", "Piqray", "Ciprodex", "Accupril", "Gilotrif", "Cipro", "Anafranil", "Gardasil", "Caplyta", "Imovax", "BeneFIX", "Fycompa", "Iclusig", "Thymoglobulin", "Pristiq", "Korlym", "Jardiance", "Botox"}
 	*/
-	var inputGenerated []string = []string{"Xanax", "Ativan", "Viagra"}
+	var inputGenerated []string = []string{"Xeljanz", "Trisenox", "Afinitor", "Nityr", "Mylotarg", "Phesgo", "Ampyra", "Odomzo", "Delstrigo", "Enhertu", "Thiola", "Gelnique", "Nardil", "Cardura", "Cortef", "Gleevec", "Daypro", "Evista", "Myobloc", "Treanda", "Lumoxiti", "Bosulif", "Levoxyl", "Piqray", "Ciprodex", "Accupril", "Gilotrif", "Cipro", "Anafranil", "Gardasil", "Caplyta", "Imovax", "BeneFIX", "Fycompa", "Iclusig", "Thymoglobulin", "Pristiq", "Korlym", "Jardiance", "Botox"}
+	// var inputGenerated []string = []string{"Zubsolv", "Juluca", "Invega", "Herceptin", "Cinryze", "Sustol", "Zonegran", "Tecartus", "Alfamino", "Depakote"}
+	// var inputGenerated []string = []string{"Xanax", "Ativan", "Viagra"}
 	N = len(inputGenerated)
 
 	// Creation of a list to contain drugMap of each drugName
 	var listDrugMap []drugMap = make([]drugMap, 0, N)
+
+	listName := make([]string, 0)
+	allNodes := make(map[string]Node)
 
 	for i := 0; i < N; i++ {
 		// scanner.Scan()
@@ -98,71 +103,33 @@ func main() {
 
 		// Append drugMap to list
 		listDrugMap = append(listDrugMap, drugMap_t)
+
+		// Creation of the node
+		allNodes[s] = newNode(s)
+		listName = append(listName, s)
 	}
 
 	fmt.Fprintln(os.Stderr, "N", N)
 	fmt.Fprintln(os.Stderr, "listDrugMap", listDrugMap)
 
-	var counter int = 0
-
-	var listCompatible [][]int = make([][]int, 0, N)
-
 	// Liste des compatibles
 	for i := 0; i < N; i++ {
-
-		var array_t []int = make([]int, 0, N-1)
-		listCompatible = append(listCompatible, array_t)
-
 		for j := 0; j < N; j++ {
 			if j == i {
 				continue
 			}
 
 			if compareDrugMap(listDrugMap[i], listDrugMap[j]) {
-				listCompatible[i] = append(listCompatible[i], j)
+				allNodes[listName[i]].neighbors[listName[j]] = allNodes[listName[j]]
 			}
 		}
 	}
 
-	fmt.Fprintln(os.Stderr, listCompatible, "listCompatible")
+	var counter int = 0
 
-	for i := 0; i < N; i++ {
-		var i_t int = maxInteractionInSet(listCompatible, listCompatible[i])
-		fmt.Fprintln(os.Stderr, i, listCompatible[i], i_t, "maxInSet")
-	}
+	potentialClique := make(map[string]Node)
+	skipNodes := make(map[string]Node)
 
+	fmt.Println(findCliques(potentialClique, allNodes, skipNodes, 0, &counter))
 	fmt.Println(counter) // Write answer to stdout
-}
-
-func maxInteractionInSet(listCompatible [][]int, set []int) int {
-	var max int = 0
-
-	// Parcours du set
-	for _, v := range set {
-
-		var count int = 0
-
-		// Parcours des éléments de l'élément en cours du set initial
-		for _, subElemt := range listCompatible[v] {
-			if in(subElemt, set) {
-				count++
-			}
-		}
-
-		if count > max {
-			max = count
-		}
-
-	}
-
-	return max
-}
-
-func in(x int, list []int) bool {
-	for _, v := range list {
-		if v == x {
-			return true
-		}
-	}
-	return false
 }

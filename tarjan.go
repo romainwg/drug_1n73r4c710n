@@ -18,6 +18,7 @@ func (g Graphe) setEdge(in int, out int) {
 	g[in].edges = append(g[in].edges, &g[out])
 }
 
+// https://fr.wikipedia.org/wiki/Algorithme_de_Tarjan
 func tarjan(g Graphe) [][]*Vertex {
 
 	// num := 0
