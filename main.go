@@ -144,6 +144,5 @@ func main() {
 	fmt.Fprintln(os.Stderr, findCliques(potentialClique, allNodes, skipNodes, 0, &counter))
 
 	// fmt.Fprintln(os.Stderr, "end calc", (time.Now().UnixNano()-now)/1000000)
-
 	fmt.Println(counter) // Write answer to stdout
 }
