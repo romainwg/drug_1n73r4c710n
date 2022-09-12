@@ -70,6 +70,7 @@ func main() {
 	// fmt.Sscan(scanner.Text(), &N)
 
 	// For VS Code only
+
 	/* JS code to get tests input from codingame
 	const N = parseInt(readline());
 	var in_t = []
@@ -79,22 +80,27 @@ func main() {
 	}
 	console.error(in_t.join(", "));
 	*/
-	/* Test 3
-	var inputGenerated []string = []string{"Xeljanz", "Trisenox", "Afinitor", "Nityr", "Mylotarg", "Phesgo", "Ampyra", "Odomzo", "Delstrigo", "Enhertu", "Thiola", "Gelnique", "Nardil", "Cardura", "Cortef", "Gleevec", "Daypro", "Evista", "Myobloc", "Treanda", "Lumoxiti", "Bosulif", "Levoxyl", "Piqray", "Ciprodex", "Accupril", "Gilotrif", "Cipro", "Anafranil", "Gardasil", "Caplyta", "Imovax", "BeneFIX", "Fycompa", "Iclusig", "Thymoglobulin", "Pristiq", "Korlym", "Jardiance", "Botox"}
+
+	/*
+		// Test 1 / Result expected : 2
+		var inputGenerated []string = []string{"Xanax", "Ativan", "Viagra"}
+
+		// Test 2 / Result expected : 5
+		var inputGenerated []string = []string{"Zubsolv", "Juluca", "Invega", "Herceptin", "Cinryze", "Sustol", "Zonegran", "Tecartus", "Alfamino", "Depakote"}
+
+		// Test 3 / Result expected : 11
+		var inputGenerated []string = []string{"Xeljanz", "Trisenox", "Afinitor", "Nityr", "Mylotarg", "Phesgo", "Ampyra", "Odomzo", "Delstrigo", "Enhertu", "Thiola", "Gelnique", "Nardil", "Cardura", "Cortef", "Gleevec", "Daypro", "Evista", "Myobloc", "Treanda", "Lumoxiti", "Bosulif", "Levoxyl", "Piqray", "Ciprodex", "Accupril", "Gilotrif", "Cipro", "Anafranil", "Gardasil", "Caplyta", "Imovax", "BeneFIX", "Fycompa", "Iclusig", "Thymoglobulin", "Pristiq", "Korlym", "Jardiance", "Botox"}
 	*/
 	var inputGenerated []string = []string{"Xeljanz", "Trisenox", "Afinitor", "Nityr", "Mylotarg", "Phesgo", "Ampyra", "Odomzo", "Delstrigo", "Enhertu", "Thiola", "Gelnique", "Nardil", "Cardura", "Cortef", "Gleevec", "Daypro", "Evista", "Myobloc", "Treanda", "Lumoxiti", "Bosulif", "Levoxyl", "Piqray", "Ciprodex", "Accupril", "Gilotrif", "Cipro", "Anafranil", "Gardasil", "Caplyta", "Imovax", "BeneFIX", "Fycompa", "Iclusig", "Thymoglobulin", "Pristiq", "Korlym", "Jardiance", "Botox"}
-	// var inputGenerated []string = []string{"Zubsolv", "Juluca", "Invega", "Herceptin", "Cinryze", "Sustol", "Zonegran", "Tecartus", "Alfamino", "Depakote"}
-	// var inputGenerated []string = []string{"Xanax", "Ativan", "Viagra"}
+
 	N = len(inputGenerated)
 
 	// Creation of a list to contain drugMap of each drugName
 	var listDrugMap []drugMap = make([]drugMap, 0, N)
 
-	// listName := make([]string, 0)
-	listId := make([]int, 0)
-
-	// https://goplay.tools/snippet/sCHnZ61L2-D
-	allNodes := make(map[int][]int)
+	listName := make([]string, 0)
+	// https://goplay.tools/snippet/sCHnZ61L2-D / allNodes := make(map[int][]int)
+	allNodes := make(map[string]Node)
 
 	for i := 0; i < N; i++ {
 		// scanner.Scan()
@@ -107,15 +113,13 @@ func main() {
 		// Append drugMap to list
 		listDrugMap = append(listDrugMap, drugMap_t)
 
-		// listName = append(listName, s)
-		listId = append(listId, i)
-
-		// Creation of nodes list
-		allNodes[i] = make([]int, 0)
+		// Creation of the node
+		allNodes[s] = newNode(s)
+		listName = append(listName, s)
 	}
 
-	fmt.Fprintln(os.Stderr, "N", N)
-	fmt.Fprintln(os.Stderr, "listDrugMap", listDrugMap)
+	// fmt.Fprintln(os.Stderr, "N", N)
+	// fmt.Fprintln(os.Stderr, "listDrugMap", listDrugMap)
 
 	// Liste des compatibles
 	for i := 0; i < N; i++ {
@@ -125,18 +129,21 @@ func main() {
 			}
 
 			if compareDrugMap(listDrugMap[i], listDrugMap[j]) {
-				allNodes[i] = append(allNodes[i], j)
+				allNodes[listName[i]].neighbors[listName[j]] = allNodes[listName[j]]
 			}
 		}
 	}
 
-	fmt.Fprintln(os.Stderr, "allNodes", allNodes)
+	// fmt.Fprintln(os.Stderr, "end prep", (time.Now().UnixNano()-now)/1000000)
 
 	var counter int = 0
 
-	potentialClique := make([]int, 0)
-	skipNodes := make([]int, 0)
+	potentialClique := make(map[string]Node)
+	skipNodes := make(map[string]Node)
 
-	fmt.Println(findCliques(allNodes, potentialClique, listId, skipNodes, 0, &counter))
+	fmt.Fprintln(os.Stderr, findCliques(potentialClique, allNodes, skipNodes, 0, &counter))
+
+	// fmt.Fprintln(os.Stderr, "end calc", (time.Now().UnixNano()-now)/1000000)
+
 	fmt.Println(counter) // Write answer to stdout
 }
