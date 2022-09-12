@@ -90,8 +90,11 @@ func main() {
 	// Creation of a list to contain drugMap of each drugName
 	var listDrugMap []drugMap = make([]drugMap, 0, N)
 
-	listName := make([]string, 0)
-	allNodes := make(map[string]Node)
+	// listName := make([]string, 0)
+	listId := make([]int, 0)
+
+	// https://goplay.tools/snippet/sCHnZ61L2-D
+	allNodes := make(map[int][]int)
 
 	for i := 0; i < N; i++ {
 		// scanner.Scan()
@@ -104,9 +107,11 @@ func main() {
 		// Append drugMap to list
 		listDrugMap = append(listDrugMap, drugMap_t)
 
-		// Creation of the node
-		allNodes[s] = newNode(s)
-		listName = append(listName, s)
+		// listName = append(listName, s)
+		listId = append(listId, i)
+
+		// Creation of nodes list
+		allNodes[i] = make([]int, 0)
 	}
 
 	fmt.Fprintln(os.Stderr, "N", N)
@@ -120,16 +125,18 @@ func main() {
 			}
 
 			if compareDrugMap(listDrugMap[i], listDrugMap[j]) {
-				allNodes[listName[i]].neighbors[listName[j]] = allNodes[listName[j]]
+				allNodes[i] = append(allNodes[i], j)
 			}
 		}
 	}
 
+	fmt.Fprintln(os.Stderr, "allNodes", allNodes)
+
 	var counter int = 0
 
-	potentialClique := make(map[string]Node)
-	skipNodes := make(map[string]Node)
+	potentialClique := make([]int, 0)
+	skipNodes := make([]int, 0)
 
-	fmt.Println(findCliques(potentialClique, allNodes, skipNodes, 0, &counter))
+	fmt.Println(findCliques(allNodes, potentialClique, listId, skipNodes, 0, &counter))
 	fmt.Println(counter) // Write answer to stdout
 }
